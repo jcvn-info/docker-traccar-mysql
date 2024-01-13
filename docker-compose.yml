@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services: 
 
  mysql:
@@ -22,6 +22,18 @@ services:
    - traccar-db:/opt/traccar/data/database
    - ./conf/traccar.xml:/opt/traccar/conf/traccar.xml
 
+  evolution-api:
+    image: atendai/evolution-api
+    command: ["node", "./dist/src/main.js"]
+    container_name: evolution_api
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - API_KEY=traccar-api_evolution2024
+    volumes:
+      - evolution_store:/evolution/store
+      - evolution_instances:/evolution/instances
 volumes:
- traccar-db:
- mysql:
+  traccar-db:
+  mysql:
