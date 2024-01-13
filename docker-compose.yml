@@ -1,39 +1,46 @@
 version: '3'
-services: 
+services:
 
  mysql:
-  image: mysql
+  image: mysql:8.0
+  command: --default-authentication-plugin=mysql_native_password
   restart: always
+  container_name: mysql
   hostname: mysql
   environment:
    - MYSQL_ROOT_PASSWORD=root
+   - MYSQL_DATABASE=traccar
+   - MYSQL_USER=traccar
+   - MYSQL_PASSWORD=traccar
   volumes:
    - mysql:/var/lib/mysql/
-   - ./conf/mysql.sql:/docker-entrypoint-initdb.d/mysql.sql
+     #   - ./conf/mysql.sql:/docker-entrypoint-initdb.d/mysql.sql
 
  traccar:
-  image: marcelmaatkamp/traccar-server
+  image: "traccar/traccar:latest"
+  container_name: traccar
   hostname: traccar
   restart: always
   ports:
-   - "5000-5150:5000-5150"
+   - "5000-5200:5000-5200"
    - "8082:8082"
   volumes:
    - traccar-db:/opt/traccar/data/database
    - ./conf/traccar.xml:/opt/traccar/conf/traccar.xml
 
-  evolution-api:
-    image: atendai/evolution-api
-    command: ["node", "./dist/src/main.js"]
-    container_name: evolution_api
-    restart: always
-    ports:
-      - "8080:8080"
-    environment:
-      - API_KEY=traccar-api_evolution2024
-    volumes:
-      - evolution_store:/evolution/store
-      - evolution_instances:/evolution/instances
+ evolution-api:
+  image: atendai/evolution-api
+  command: ["node", "./dist/src/main.js"]
+  container_name: evolution_api
+  restart: always
+  ports:
+    - "8080:8080"
+  environment:
+    - API_KEY=traccar-api_evolution2024
+  volumes:
+    - evolution_store:/evolution/store
+    - evolution_instances:/evolution/instances
+
 volumes:
   traccar-db:
   mysql:
