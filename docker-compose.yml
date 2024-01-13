@@ -6,7 +6,7 @@ services:
   restart: always
   hostname: mysql
   environment:
-   - MYSQL_ROOT_PASSWORD=my-secret-pw
+   - MYSQL_ROOT_PASSWORD=root
   volumes:
    - mysql:/var/lib/mysql/
    - ./conf/mysql.sql:/docker-entrypoint-initdb.d/mysql.sql
