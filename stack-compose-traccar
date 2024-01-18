@@ -57,7 +57,7 @@ services:
       - "traefik.http.services.edge.loadbalancer.server.port=8000"
       - "traefik.http.routers.edge.service=edge"
       - "traefik.http.routers.edge.tls.certresolver=leresolver"
-  
+
   mysql:
     container_name: mysql
     image: mysql:8.0
@@ -84,6 +84,14 @@ services:
     volumes:
      - traccar-db:/opt/traccar/data/database
      - ./conf/traccar.xml:/opt/traccar/conf/traccar.xml
+    labels:
+      # Traccar
+      - "traefik.enable=true"
+      - "traefik.http.routers.traccar.rule=Host(`traccar.trackandtrace.dedyn.io`)"
+      - "traefik.http.routers.traccar.entrypoints=websecure"
+      - "traefik.http.services.traccar.loadbalancer.server.port=8082"
+      - "traefik.http.routers.traccar.service=traccar"
+      - "traefik.http.routers.traccar.tls.certresolver=leresolver"
 
   evolution-api:
     image: atendai/evolution-api
@@ -97,7 +105,15 @@ services:
     volumes:
       - evolution_store:/evolution/store
       - evolution_instances:/evolution/instances
-  
+    labels:
+      # Evo
+      - "traefik.enable=true"
+      - "traefik.http.routers.evo.rule=Host(`evo.trackandtrace.dedyn.io`)"
+      - "traefik.http.routers.evo.entrypoints=websecure"
+      - "traefik.http.services.evo.loadbalancer.server.port=8080"
+      - "traefik.http.routers.evo.service=evo"
+      - "traefik.http.routers.evo.tls.certresolver=leresolver"
+
 volumes:
   traccar-db:
   mysql:
